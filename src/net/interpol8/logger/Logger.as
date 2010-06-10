@@ -30,6 +30,7 @@ package net.interpol8.logger
 
     import mx.logging.ILogger;
     import mx.logging.Log;
+    import mx.logging.LogEventLevel;
     import mx.logging.targets.TraceTarget;
     import mx.utils.StringUtil;
 
@@ -40,7 +41,7 @@ package net.interpol8.logger
         internal var _mxTarget : TraceTarget;
         internal var _appTarget : TraceTarget;
 
-        public function Logger(prefix : String, logLevelMx : int, logLevelApp : int) : void {
+        public function Logger(prefix : String, logLevelMx : int, logLevelApp : int, seperator : Boolean = true) : void {
             _prefix = prefix;
 
             _mxTarget = new TraceTarget();
@@ -58,6 +59,9 @@ package net.interpol8.logger
             _appTarget.includeCategory = true;
             _appTarget.includeLevel = true;
             Log.addTarget(_appTarget);
+
+            if (seperator)
+                logSeperator();
         }
 
         public static function logSeperator() : void {
@@ -68,15 +72,23 @@ package net.interpol8.logger
             Log.getLogger(_prefix).debug('/******************************************************************************/');
         }
 
-        public static function log(obj : Object, str : String = '*', level : int = 2) : void {
+        public static function log(obj : Object, level : int = 2, str : String = '*') : void {
             Log.getLogger(_prefix + '.' + getNamespace(obj)).log(level, str);
         }
 
-        public static function logCompact(obj : Object, str : String, level : int = 2) : void {
+        public static function logf(obj : Object, level : int, str : String, ... rest) : void {
+            log(obj, level, StringUtil.substitute(str, rest));
+        }
+
+        public static function debug(obj : Object, str : String = '*') : void {
+            Log.getLogger(_prefix + '.' + getNamespace(obj)).log(LogEventLevel.DEBUG, str);
+        }
+
+        public static function compact(obj : Object, level : int = 2, str : String = '*') : void {
             Log.getLogger(_prefix + '.' + getClassName(obj)).log(level, str);
         }
 
-        public static function logSimple(str : String, level : int = 2) : void {
+        public static function simple(level : int = 2, str : String = '*') : void {
             Log.getLogger(_prefix).log(level, str);
         }
 
@@ -86,20 +98,13 @@ package net.interpol8.logger
 
         internal static function getClassName(obj : Object) : String {
             var xml : XML = describeType(obj);
-
             return xml.@name.split('::')[1];
         }
 
         internal static function getNamespace(obj : Object) : String {
             var xml : XML = describeType(obj);
-
             var category : RegExp = /::/;
-
             return String(xml.@name).replace(category, '_');
-        }
-
-        public static function logf(obj : Object, str : String, ... rest) : void {
-            log(obj, StringUtil.substitute(str, rest));
         }
     }
 }
