@@ -2,7 +2,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2010, Tom Hensel <tom@interpol8.net>
+ * Copyright (c) 2011, Tom Hensel <tom@interpol8.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,11 +37,11 @@ package net.interpol8.logger
     public final class Logger
     {
         internal static var _prefix : String = '';
-        internal var _logger : ILogger;
         internal var _mxTarget : TraceTarget;
         internal var _appTarget : TraceTarget;
 
-        public function Logger(prefix : String, logLevelMx : int, logLevelApp : int, seperator : Boolean = true) : void {
+        public function Logger(prefix : String, logLevelMx : int, logLevelApp : int,
+                               seperator : Boolean = true) : void {
             _prefix = prefix;
 
             _mxTarget = new TraceTarget();
